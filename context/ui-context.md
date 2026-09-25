@@ -37,6 +37,8 @@ Tailwind utility names map to these variables. Use `bg-base`, `bg-surface`, `tex
 
 Both fonts are loaded via `next/font/google` and applied as CSS variables on the `<html>` element. The base `body` uses Geist Sans with `antialiased`.
 
+The `--color-base` token makes Tailwind's `text-base` utility a text color in this project. Use `text-[length:1rem]` when a 1rem font size is intended.
+
 ## Border Radius
 
 Radius increases with surface depth — smaller for inner elements, larger for outer containers.

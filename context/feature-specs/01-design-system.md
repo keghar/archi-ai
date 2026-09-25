@@ -1,8 +1,8 @@
-Read 'Agents.md' before starting.
+Read 'AGENTS.md' before starting.
 
-Wer're adding the design system and UI primitive components
+We're adding the design system and UI primitive components
 
-Install and configure 'shadcn/ui'/
+Install and configure 'shadcn/ui'.
 
 Add these components:
 - Button
@@ -13,7 +13,7 @@ Add these components:
 - Textarea
 - ScrollArea
 
-Do not modify the the generated 'components/ui/*' foles after installation
+Do not modify the generated 'components/ui/*' files after installation
 
 Also install 'lucide-react',
 

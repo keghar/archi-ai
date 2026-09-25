@@ -1,7 +1,7 @@
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="text-2xl font-semibold tracking-tight">archiAI</div>
-    </div>
-  );
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+
+export default async function Home() {
+  const { userId } = await auth();
+  redirect(userId ? "/editor" : "/sign-in");
 }
