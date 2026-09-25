@@ -1,19 +1,34 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Plus, X } from "lucide-react";
+import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { Project } from "@/components/editor/use-project-dialogs";
 
 interface ProjectSidebarProps {
   id: string;
   isOpen: boolean;
   onClose: () => void;
+  projects: Project[];
+  onCreateProject: () => void;
+  onRenameProject: (project: Project) => void;
+  onDeleteProject: (project: Project) => void;
 }
 
-export default function ProjectSidebar({ id, isOpen, onClose }: ProjectSidebarProps) {
+export default function ProjectSidebar({
+  id,
+  isOpen,
+  onClose,
+  projects,
+  onCreateProject,
+  onRenameProject,
+  onDeleteProject,
+}: ProjectSidebarProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const ownedProjects = projects.filter((project) => project.access === "owned");
+  const sharedProjects = projects.filter((project) => project.access === "shared");
 
   useEffect(() => {
     if (isOpen) closeRef.current?.focus();
@@ -50,19 +65,62 @@ export default function ProjectSidebar({ id, isOpen, onClose }: ProjectSidebarPr
             <TabsTrigger className="rounded-xl" value="shared">Shared</TabsTrigger>
           </TabsList>
           <TabsContent value="my-projects">
-            <p className="py-8 text-center text-sm text-copy-muted">No projects yet</p>
+            {ownedProjects.length === 0 ? (
+              <p className="py-8 text-center text-sm text-copy-muted">No projects yet</p>
+            ) : (
+              <ul className="mt-3 space-y-1">
+                {ownedProjects.map((project) => (
+                  <li key={project.id} className="flex min-w-0 items-center gap-1 rounded-xl px-2 py-1 hover:bg-elevated">
+                    <span className="min-w-0 flex-1 truncate py-1.5 text-sm text-copy-secondary" title={project.name}>
+                      {project.name}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-xs"
+                      className="rounded-lg text-copy-muted hover:text-copy-primary"
+                      aria-label={`Rename ${project.name}`}
+                      title={`Rename ${project.name}`}
+                      onClick={() => onRenameProject(project)}
+                    >
+                      <Pencil />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-xs"
+                      className="rounded-lg text-copy-muted hover:text-error"
+                      aria-label={`Delete ${project.name}`}
+                      title={`Delete ${project.name}`}
+                      onClick={() => onDeleteProject(project)}
+                    >
+                      <Trash2 />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </TabsContent>
           <TabsContent value="shared">
-            <p className="py-8 text-center text-sm text-copy-muted">No shared projects</p>
+            {sharedProjects.length === 0 ? (
+              <p className="py-8 text-center text-sm text-copy-muted">No shared projects</p>
+            ) : (
+              <ul className="mt-3 space-y-1">
+                {sharedProjects.map((project) => (
+                  <li key={project.id} className="truncate rounded-xl px-2 py-2 text-sm text-copy-secondary" title={project.name}>
+                    {project.name}
+                  </li>
+                ))}
+              </ul>
+            )}
           </TabsContent>
         </Tabs>
       </div>
       <div className="shrink-0 p-4">
-        <Button className="w-full rounded-xl" disabled aria-describedby={`${id}-creation-hint`}>
+        <Button className="w-full rounded-xl" onClick={onCreateProject}>
           <Plus className="size-5" />
           New Project
         </Button>
-        <p id={`${id}-creation-hint`} className="mt-2 text-center text-xs text-copy-muted">Project creation is coming soon.</p>
       </div>
     </aside>
   );

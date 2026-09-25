@@ -15,8 +15,8 @@ export function DialogPattern({ title, description, children, footer }: DialogPa
   return (
     <DialogContent className="rounded-3xl">
       <DialogHeader>
-        <DialogTitle>{title}</DialogTitle>
-        {description && <DialogDescription>{description}</DialogDescription>}
+        <DialogTitle className="text-copy-primary text-[length:1rem]">{title}</DialogTitle>
+        {description && <DialogDescription className="text-copy-muted">{description}</DialogDescription>}
       </DialogHeader>
       {children && <div className="py-4">{children}</div>}
       {footer && <DialogFooter className="rounded-b-3xl">{footer}</DialogFooter>}

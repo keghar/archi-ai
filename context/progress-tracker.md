@@ -5,6 +5,7 @@ Update this file whenever the current phase, active feature, or implementation s
 ## Current Phase
 
 - Authentication implemented; shared auth-page layout updated from the supplied reference, browser visual acceptance pending.
+- Prisma schema initialized for the database layer; the transient Prisma skills scaffold was removed.
 
 ## Current Goal
 
@@ -35,6 +36,17 @@ Update this file whenever the current phase, active feature, or implementation s
 - Signed-out HTTP checks: `/` and `/editor` redirect to sign-in; both auth pages and their nested Clerk flow paths return 200; an unknown protected path redirects to sign-in.
 - Clerk uses the standard sign-in/sign-up URL variables when provided and the specified local paths otherwise.
 - `npm run build` runs the verified webpack production build, including TypeScript and route generation.
+- `/editor` now shows the specified project home content; create, rename, and delete dialogs update local mock project data with no API or persistence.
+- Project names show a live slug preview on create; sidebar rename/delete controls appear only for owned mock projects, and the mobile sidebar closes from a backdrop tap.
+- The project-dialog feature passes `npx tsc --noEmit`, `npm run lint`, and `git diff --check`.
+- Project dialog headings, descriptions, and name inputs use the dark theme's readable foreground tokens; the `text-base` background-token collision is overridden at the app component layer.
+- Prisma schema now exists at `prisma/schema.prisma`; it targets PostgreSQL and sets the generated client output to `app/generated/prisma`.
+- Stable Prisma 7 config now exists at `prisma.config.ts` and loads `DATABASE_URL` from the local environment.
+- Project and collaborator Prisma models are defined in `prisma/models/project.prisma`, including status, cascading relation, uniqueness, and requested indexes.
+- `lib/prisma.ts` exports a development-cached Prisma client and selects Prisma Accelerate for `prisma+postgres://` URLs or the PostgreSQL driver adapter otherwise.
+- The Prisma 7 schema now keeps datasource connection configuration in `prisma.config.ts`, as required by the installed CLI.
+- Migration `add_projects_and_collaborators` was applied successfully to the configured PostgreSQL database, and Prisma Client was generated to `app/generated/prisma`.
+- The Prisma feature passes `npm run build`, `npm run lint`, and `git diff --check`.
 
 ## In Progress
 
