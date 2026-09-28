@@ -18,12 +18,15 @@
 - `trigger` — Long-running background jobs: AI design generation and spec generation.
 - `lib` — Shared infrastructure: Prisma client, access control helpers, and utilities.
 - `components` — UI composition: canvas surfaces, sidebars, dialogs, and interactive elements.
+- `hooks` — Interactive state and orchestration of client API actions.
+- `types` — Shared serializable contracts used by server data helpers and client UI.
 - `prisma` — Database schema and generated client output.
 - `data` — Legacy local directory. Not used for new artifacts.
 
 ## Storage Model
 
 - **Database**: metadata, ownership, relationships, and task run records.
+- Each project stores a unique, stable `roomId` used to address its Liveblocks room and editor workspace route.
 - **Vercel Blob**: generated artifacts — canvas snapshots at `canvas/{projectId}.json` and specs at `specs/{projectId}/{specId}.md`.
 - Project records, spec records, and task run records belong in PostgreSQL.
 - Canvas content and Markdown output are stored in and retrieved from Vercel Blob.
@@ -33,6 +36,7 @@
 
 - Every project has a single owner (Clerk user ID).
 - Projects can include additional collaborators.
+- Email-based collaborator access requires a verified email address on the signed-in Clerk user.
 - Only authenticated users can access protected routes.
 - Only the owner or a collaborator can mutate project resources.
 - Liveblocks room tokens are issued only after verifying project membership.

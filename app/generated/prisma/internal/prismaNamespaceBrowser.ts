@@ -75,6 +75,7 @@ export const ProjectScalarFieldEnum = {
   id: 'id',
   ownerId: 'ownerId',
   name: 'name',
+  roomId: 'roomId',
   description: 'description',
   status: 'status',
   canvasJsonPath: 'canvasJsonPath',

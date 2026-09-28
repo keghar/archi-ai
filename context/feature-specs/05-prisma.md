@@ -28,9 +28,9 @@ Do not add extra fields unless required by Prisma.
 
 Create 'lib/prisma.ts' as a cached singleton.
 
-Branch by 'DTATBASE_URL':
+Branch by 'DATABASE_URL':
 
-- if it starts with 'prisma+postgress://', use Accelerate
+- if it starts with 'prisma+postgres://', use Accelerate
 - otherwise use direct '@prisma/adapter-pg'
 
 Cache the client on 'global' in development for hot reloads.

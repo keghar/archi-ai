@@ -44,6 +44,8 @@
 ## File Organization
 
 - `lib/` — shared infrastructure: Prisma client, auth helpers, utilities.
+- `hooks/` — interactive state and client API action orchestration.
+- `types/` — shared serializable data contracts for server helpers and client UI.
 - `trigger/` — all durable background tasks and AI workflows.
 - `components/` — UI composition only; no business logic.
 - `app/api/` — route handlers for auth, triggering, and persistence.

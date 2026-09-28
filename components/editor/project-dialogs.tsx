@@ -4,14 +4,18 @@ import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DialogPattern from "@/components/editor/dialog-pattern";
-import { createProjectSlug, type ProjectDialogState } from "@/components/editor/use-project-dialogs";
+import type { ProjectDialogState } from "@/hooks/use-project-actions";
+import type { ProjectSummary } from "@/types/project";
 
 interface ProjectDialogsProps {
   dialog: ProjectDialogState;
-  activeProject?: { id: string; name: string };
+  targetProject?: ProjectSummary;
   projectName: string;
   setProjectName: (name: string) => void;
   isLoading: boolean;
+  canSubmit: boolean;
+  roomId: string;
+  error: string | null;
   onClose: () => void;
   onSubmitProjectName: (event: React.FormEvent<HTMLFormElement>) => void;
   onConfirmDelete: () => void;
@@ -19,24 +23,26 @@ interface ProjectDialogsProps {
 
 export default function ProjectDialogs({
   dialog,
-  activeProject,
+  targetProject,
   projectName,
   setProjectName,
   isLoading,
+  canSubmit,
+  roomId,
+  error,
   onClose,
   onSubmitProjectName,
   onConfirmDelete,
 }: ProjectDialogsProps) {
   const isOpen = dialog !== null;
   const isNameDialog = dialog?.type === "create" || dialog?.type === "rename";
-  const slug = createProjectSlug(projectName);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
       {isNameDialog && (
         <DialogPattern
           title={dialog.type === "create" ? "Create Project" : "Rename Project"}
-          description={dialog.type === "rename" ? `Rename “${activeProject?.name ?? "project"}”.` : undefined}
+          description={dialog.type === "rename" ? `Rename “${targetProject?.name ?? "project"}”.` : undefined}
           footer={
             <>
               <Button type="button" variant="outline" className="rounded-xl" onClick={onClose} disabled={isLoading}>
@@ -46,9 +52,9 @@ export default function ProjectDialogs({
                 type="submit"
                 form="project-name-form"
                 className="rounded-xl"
-                disabled={!projectName.trim() || !slug || isLoading}
+                disabled={!canSubmit}
               >
-                {dialog.type === "create" ? "Create Project" : "Save Changes"}
+                {isLoading ? "Saving…" : dialog.type === "create" ? "Create Project" : "Save Changes"}
               </Button>
             </>
           }
@@ -64,35 +70,39 @@ export default function ProjectDialogs({
                 placeholder="e.g. Payments Platform"
                 className="text-copy-primary placeholder:text-copy-muted"
                 maxLength={80}
+                disabled={isLoading}
                 required
               />
             </div>
             {dialog.type === "create" && (
               <div className="space-y-1">
-                <p className="text-xs font-medium text-copy-muted">Slug preview</p>
-                <p aria-live="polite" className="min-h-5 rounded-xl border border-surface-border bg-base px-3 py-2 font-mono text-xs text-copy-secondary">
-                  {slug || "your-project-name"}
+                <p className="text-xs font-medium text-copy-muted">Room ID preview</p>
+                <p aria-live="polite" className="min-h-5 break-all rounded-xl border border-surface-border bg-base px-3 py-2 font-mono text-xs text-copy-secondary">
+                  {roomId || "Enter a project name"}
                 </p>
               </div>
             )}
+            {error && <p role="alert" className="text-sm text-error">{error}</p>}
           </form>
         </DialogPattern>
       )}
       {dialog?.type === "delete" && (
         <DialogPattern
           title="Delete Project"
-          description={`Are you sure you want to delete “${activeProject?.name ?? "this project"}”? This action cannot be undone.`}
+          description={`Are you sure you want to delete “${targetProject?.name ?? "this project"}”? This action cannot be undone.`}
           footer={
             <>
               <Button type="button" variant="outline" className="rounded-xl" onClick={onClose} disabled={isLoading}>
                 Cancel
               </Button>
               <Button type="button" variant="destructive" className="rounded-xl" onClick={onConfirmDelete} disabled={isLoading}>
-                Delete Project
+                {isLoading ? "Deleting…" : "Delete Project"}
               </Button>
             </>
           }
-        />
+        >
+          {error && <p role="alert" className="text-sm text-error">{error}</p>}
+        </DialogPattern>
       )}
     </Dialog>
   );

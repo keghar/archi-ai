@@ -1,34 +1,35 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { Project } from "@/components/editor/use-project-dialogs";
+import type { EditorProjects, ProjectSummary } from "@/types/project";
 
-interface ProjectSidebarProps {
+interface ProjectSidebarProps extends EditorProjects {
   id: string;
   isOpen: boolean;
   onClose: () => void;
-  projects: Project[];
+  activeProjectId?: string;
   onCreateProject: () => void;
-  onRenameProject: (project: Project) => void;
-  onDeleteProject: (project: Project) => void;
+  onRenameProject: (project: ProjectSummary) => void;
+  onDeleteProject: (project: ProjectSummary) => void;
 }
 
 export default function ProjectSidebar({
   id,
   isOpen,
   onClose,
-  projects,
+  ownedProjects,
+  sharedProjects,
+  activeProjectId,
   onCreateProject,
   onRenameProject,
   onDeleteProject,
 }: ProjectSidebarProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
-  const ownedProjects = projects.filter((project) => project.access === "owned");
-  const sharedProjects = projects.filter((project) => project.access === "shared");
 
   useEffect(() => {
     if (isOpen) closeRef.current?.focus();
@@ -71,9 +72,15 @@ export default function ProjectSidebar({
               <ul className="mt-3 space-y-1">
                 {ownedProjects.map((project) => (
                   <li key={project.id} className="flex min-w-0 items-center gap-1 rounded-xl px-2 py-1 hover:bg-elevated">
-                    <span className="min-w-0 flex-1 truncate py-1.5 text-sm text-copy-secondary" title={project.name}>
+                    <Link
+                      href={`/editor/${encodeURIComponent(project.roomId)}`}
+                      aria-current={project.id === activeProjectId ? "page" : undefined}
+                      className="min-w-0 flex-1 truncate py-1.5 text-sm text-copy-secondary"
+                      title={project.name}
+                      onClick={onClose}
+                    >
                       {project.name}
-                    </span>
+                    </Link>
                     <Button
                       type="button"
                       variant="ghost"
@@ -108,7 +115,13 @@ export default function ProjectSidebar({
               <ul className="mt-3 space-y-1">
                 {sharedProjects.map((project) => (
                   <li key={project.id} className="truncate rounded-xl px-2 py-2 text-sm text-copy-secondary" title={project.name}>
-                    {project.name}
+                    <Link
+                      href={`/editor/${encodeURIComponent(project.roomId)}`}
+                      aria-current={project.id === activeProjectId ? "page" : undefined}
+                      onClick={onClose}
+                    >
+                      {project.name}
+                    </Link>
                   </li>
                 ))}
               </ul>
